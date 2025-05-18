@@ -1,0 +1,31 @@
+{
+  "os":  "Windows-10-10.0.19045-SP0",
+  "python":  "CPython 3.12.9",
+  "startedAt":  "2025-03-27T12:03:47.367478Z",
+  "program":  "c:\\Users\\jpcha\\MasterICAI\\ML2\\Practicas_DeepLearning_2025\\repoGit\\Practica_ML2\\agascong\\Practicas_DeepLearning_chavez\\03TransferLearning\\efficient-Net_B7.ipynb",
+  "codePath":  "03TransferLearning\\efficient-Net_B7.ipynb",
+  "git":  {
+    "remote":  "https://github.com/Hoyt-235/Practicas_DeepLearning_chavez.git",
+    "commit":  "c8bf80fcbd707dcd3d0f559dc81e19aba2e7a041"
+  },
+  "email":  "202410994@alu.comillas.edu",
+  "root":  "c:\\Users\\jpcha\\MasterICAI\\ML2\\Practicas_DeepLearning_2025\\repoGit\\Practica_ML2\\agascong\\Practicas_DeepLearning_chavez\\03TransferLearning",
+  "host":  "LAPTOP-AIQ6MORM",
+  "executable":  "c:\\Users\\jpcha\\miniconda3\\envs\\dl_lab\\python.exe",
+  "codePathLocal":  "efficient-Net_B7.ipynb",
+  "cpu_count":  4,
+  "cpu_count_logical":  8,
+  "disk":  {
+    "/":  {
+      "total":  "510770802688",
+      "used":  "499203035136"
+    }
+  },
+  "memory":  {
+    "total":  "16918601728"
+  },
+  "cpu":  {
+    "count":  4,
+    "countLogical":  8
+  }
+}

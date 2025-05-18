@@ -10,54 +10,60 @@ from torchvision import transforms
 from tempfile import TemporaryDirectory
 import json
 
+
+
+
+import torch
+import torch.nn as nn
+from torchvision.models import efficientnet_b7, EfficientNet_B7_Weights
+
 class CNN(nn.Module):
-    """Convolutional Neural Network model for image classification."""
-    
+    """
+    CNN model using a pre-trained EfficientNet-B7 as the base.
+    The built-in classifier of EfficientNet-B7 is replaced with an identity
+    so that the base model returns a feature vector of size 2560.
+    A new classifier is added on top for fine-tuning.
+    """
     def __init__(self, base_model, num_classes, unfreezed_layers=0):
-        """CNN model initializer.
-
+        """
         Args:
-            base_model: Pre-trained model to use as the base.
-            num_classes: Number of classes in the dataset.
-            unfreezed_layers: Number of layers to unfreeze from the base model.
-
+            base_model: Pre-trained EfficientNet-B7 model with classifier replaced by Identity.
+            num_classes: Number of output classes.
+            unfreezed_layers: (Optional) Number of layers (from the end of base_model.features) to unfreeze.
         """
         super().__init__()
         self.base_model = base_model
-        self.num_classes = num_classes
-
-        # Freeze convolutional layers
+        
+        # Freeze all parameters in the base model
         for param in self.base_model.parameters():
             param.requires_grad = False
 
-        # Unfreeze specified number of layers
+        # Optionally unfreeze the last few layers in the features module for fine-tuning.
         if unfreezed_layers > 0:
-            for layer in list(self.base_model.children())[-unfreezed_layers:]:
+            # EfficientNet's convolutional body is stored in base_model.features (a Sequential container)
+            features = list(self.base_model.features.children())
+            for layer in features[-unfreezed_layers:]:
                 for param in layer.parameters():
                     param.requires_grad = True
 
-        # Add a new softmax output layer
-        self.fc = nn.Sequential(
-            nn.Linear(self.base_model.fc.in_features, 1024),
+        # EfficientNet-B7 returns a flattened feature vector of size 2560.
+        in_features = 2560
+        self.classifier = nn.Sequential(
+            nn.Linear(in_features, 1024),
             nn.ReLU(),
             nn.Dropout(0.2),
             nn.Linear(1024, num_classes),
             nn.Softmax(dim=1)
         )
 
-        # Replace the last layer of the base model
-        self.base_model.fc = nn.Identity()
-
     def forward(self, x):
-        """Forward pass of the model.
-
-        Args:
-            x: Input data.
-        """
+        # Pass through the base model. The EfficientNet-B7 forward does:
+        # features -> avgpool -> flatten -> classifier (here Identity)
         x = self.base_model(x)
-        x = x.reshape(x.size(0), -1)
-        x = self.fc(x)
+        # x is now a tensor of shape (batch, 2560)
+        x = self.classifier(x)
         return x
+
 
     def train_model(self, 
                     train_loader, 
